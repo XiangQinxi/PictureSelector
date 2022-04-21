@@ -9,23 +9,35 @@ class PictureViewer(object):
         self.Window.set_icon_name("applications-graphics")  # 设置窗口图标
         self.Window.set_default_size(780, 425)  # 设置窗口默认大小
         self.Window.set_position(Gtk.WindowPosition.CENTER_ALWAYS)  # 设置窗口位置 CENTER_ALWAYS 为窗口显示时刷新在桌面中央
+        self.ClipBoard = Gtk.Clipboard()
 
     def OpenConfigureDialog(self, Widget):
         self.ConfigureDialog = Gtk.Window(transient_for=self.Window)
         self.ConfigureDialog.set_icon_name("applications-graphics")
         self.ConfigureDialog.set_default_size(540, 230)
         self.ConfigureDialog.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
-
+        ######################
         self.ConfigureDialogHeaderBar = Gtk.HeaderBar()
-        self.ConfigureDialogHeaderBar.set_title("")
+        self.ConfigureDialogHeaderBar.set_title("图片查看器 配置")
         self.ConfigureDialogHeaderBar.set_show_close_button(True)
         self.ConfigureDialog.set_titlebar(self.ConfigureDialogHeaderBar)
-
+        ######################
         self.ConfigureDialogIcon = Gtk.Image()  # 初始化打开文件窗口标题栏的图标
         self.ConfigureDialogIcon.set_margin_start(5)
         self.ConfigureDialogIcon.set_from_icon_name("applications-graphics", Gtk.IconSize.LARGE_TOOLBAR)  # 设置打开文件窗口标题栏的图标
         self.ConfigureDialogHeaderBar.pack_start(self.ConfigureDialogIcon)  # 打开文件窗口的标题栏加入图片组件
+        ######################
+        self.ConfigureDialogNoteBook = Gtk.Notebook()
 
+        self.ConfigureDialogOperation = Gtk.Grid()
+        self.ConfigureDialogOperationCilp = Gtk.Label(label="选择完图片后复制到剪切板上：")
+        self.ConfigureDialogOperationCheck = Gtk.CheckButton(label="确定")
+        self.ConfigureDialogOperation.attach(self.ConfigureDialogOperationCilp, 0, 0, 1, 1)
+        self.ConfigureDialogOperation.attach(self.ConfigureDialogOperationCheck, 1, 0, 1, 1)
+        self.ConfigureDialogOperationLabel = Gtk.Label(label="操作")
+        self.ConfigureDialogNoteBook.append_page(self.ConfigureDialogOperation, self.ConfigureDialogOperationLabel)
+        self.ConfigureDialog.add(self.ConfigureDialogNoteBook)
+        ######################
         self.ConfigureDialog.show_all()
 
     def OpenChooserPictureDialog(self, Widget):
@@ -72,12 +84,17 @@ class PictureViewer(object):
         self.PicturePageImage.set_from_file(self.Path.get_path())
         self.PicturePageImagePathText.set_text(self.Path.get_path())
         self.HeaderBar.set_subtitle(self.Path.get_basename())
+        if self.ConfigureDialogOperationCheck.get_active():
+            self.ClipBoard.set_text(self.Path.get_path(), 0)
         print(self.Path.get_path())
         print(self.Path.get_basename())
         self.OpenChooserPictureDialogCanel(self.ChooserPictureDialogHeaderBarOK)
 
     def OpenChooserPictureDialogCanel(self, Widget):
         self.ChooserPictureDialog.close()
+
+    def CreatorResources(self):
+        pass
 
     def SetHeaderBar(self):
         self.HeaderBar = Gtk.HeaderBar()
